@@ -6,6 +6,7 @@
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.2033514492753623" />
         <entry key="app/src/main/res/layout/fragment_article.xml" value="0.2033514492753623" />
         <entry key="app/src/main/res/layout/fragment_breaking_news.xml" value="0.10260416666666666" />
+        <entry key="app/src/main/res/layout/fragment_saved_news.xml" value="0.10260416666666666" />
         <entry key="app/src/main/res/layout/item_article_preview.xml" value="0.2033514492753623" />
         <entry key="app/src/main/res/menu/menu_fragments.xml" value="0.23802083333333332" />
       </map>
