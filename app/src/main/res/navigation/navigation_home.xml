@@ -8,7 +8,6 @@
         android:id="@+id/articleFragment"
         android:name="com.example.mynewsapp.ui.fragments.ArticleFragment"
         android:label="ArticleFragment" >
-
         <argument
             android:name="article"
             app:argType="com.example.mynewsapp.data.remote.entity.Article" />

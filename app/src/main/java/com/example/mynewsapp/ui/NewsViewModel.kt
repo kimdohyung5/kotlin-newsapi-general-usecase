@@ -14,14 +14,17 @@ import com.example.mynewsapp.data.remote.entity.NewsResponse
 import com.example.mynewsapp.repository.NewsRepository
 import com.example.mynewsapp.util.Resource
 import dagger.hilt.android.internal.Contexts.getApplication
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import java.io.IOException
+import javax.inject.Inject
 
-class NewsViewModel(
-    app: Application,
-    val newsRepository: NewsRepository
-) : AndroidViewModel(app) {
+@HiltViewModel
+class NewsViewModel @Inject constructor(
+    private val app: Application,
+    private val newsRepository: NewsRepository
+) : ViewModel() {
 
     val breakingNews: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
     var breakingNewsPage = 1
@@ -38,16 +41,10 @@ class NewsViewModel(
         getBreakingNews("us")
     }
     fun getBreakingNews(countryCode: String) = viewModelScope.launch {
-//        breakingNews.postValue(Resource.Loading())
-//        val response = newsRepository.getBreakingNews(countryCode, breakingNewsPage)
-//        breakingNews.postValue( handleBreakingNewsResponse(response) )
         safeBreakingNewsCall(countryCode)
     }
 
     fun searchNews(searchQuery: String) = viewModelScope.launch {
-//        searchNews.postValue(Resource.Loading() )
-//        val response = newsRepository.searchNews(searchQuery, searchNewsPage)
-//        searchNews.postValue( handleSearchNewsResponse(response))
         safeSearchNewsCall(searchQuery)
     }
 
@@ -134,7 +131,8 @@ class NewsViewModel(
     }
 
     private fun hasInternetConnection(): Boolean {
-        val connectivityManager = getApplication<MyNewsApp>().getSystemService(
+
+        val connectivityManager = app.getSystemService(
             Context.CONNECTIVITY_SERVICE
         ) as ConnectivityManager
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

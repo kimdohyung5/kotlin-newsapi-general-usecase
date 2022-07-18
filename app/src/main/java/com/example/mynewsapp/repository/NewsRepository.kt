@@ -1,17 +1,20 @@
 package com.example.mynewsapp.repository
 
 import com.example.mynewsapp.data.local.NewsDatabase
-import com.example.mynewsapp.data.remote.RetrofitInstance
+import com.example.mynewsapp.data.remote.NewsAPI
 import com.example.mynewsapp.data.remote.entity.Article
+import javax.inject.Inject
 
-class NewsRepository(
-    val db: NewsDatabase
+
+class NewsRepository @Inject constructor(
+    private val db: NewsDatabase,
+    private val api: NewsAPI
 ) {
     suspend fun getBreakingNews(countryCode: String, pageNumber: Int) =
-        RetrofitInstance.api.getBreakingNews(countryCode, pageNumber)
+        api.getBreakingNews(countryCode, pageNumber)
 
     suspend fun searchNews(searchQuery: String, pageNumber: Int) =
-        RetrofitInstance.api.searchForNews(searchQuery, pageNumber)
+        api.searchForNews(searchQuery, pageNumber)
 
     suspend fun upsert(article: Article) = db.getDao().upsert(article)
 
