@@ -78,7 +78,6 @@ class SavedNewsFragment : Fragment() {
         }
 
         viewModel.getSavedNews().observe(viewLifecycleOwner) { articles ->
-
             newsAdapter.differ.submitList( articles )
         }
     }

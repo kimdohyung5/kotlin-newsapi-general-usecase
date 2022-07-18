@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AbsListView
+import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModel
 import androidx.navigation.fragment.findNavController
@@ -46,7 +47,6 @@ class SearchNewsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel = (activity as MainActivity).viewModel
-
         setupRecyclerView()
 
         newsAdapter.setOnItemClickListener {
@@ -77,6 +77,7 @@ class SearchNewsFragment : Fragment() {
             when(response) {
                 is Resource.Success -> {
                     hideProgressBar()
+                    hideErrorMessage()
                     response.data?.let { newsResponse ->
                         newsAdapter.differ.submitList( newsResponse.articles.toList() )
                         val totalPages = newsResponse.totalResults / Constants.QUERY_PAGE_SIZE + 2
@@ -89,7 +90,8 @@ class SearchNewsFragment : Fragment() {
                 is Resource.Error -> {
                     hideProgressBar()
                     response.message?.let { message ->
-                        Log.d(BreakingNewsFragment.TAG, "error occurred : ${message} ")
+                        Toast.makeText(activity, "An error occured: $message", Toast.LENGTH_LONG).show()
+                        showErrorMessage(message)
 
                     }
                 }
@@ -97,8 +99,14 @@ class SearchNewsFragment : Fragment() {
                     showProgressBar()
                 }
             }
-
         }
+//        binding.btnRetry.setOnClickListener {
+//            if (binding.etSearch.text.toString().isNotEmpty()) {
+//                viewModel.searchNews(binding.etSearch.text.toString())
+//            } else {
+//                hideErrorMessage()
+//            }
+//        }
     }
 
     private fun hideProgressBar() {
@@ -111,6 +119,18 @@ class SearchNewsFragment : Fragment() {
         isLoading = true
     }
 
+    private fun hideErrorMessage() {
+//        itemErrorMessage.visibility = View.INVISIBLE
+        isError = false
+    }
+
+    private fun showErrorMessage(message: String) {
+//        itemErrorMessage.visibility = View.VISIBLE
+//        tvErrorMessage.text = message
+        isError = true
+    }
+
+    var isError = false
     var isLoading = false
     var isLastPage = false
     var isScrolling = false
@@ -125,11 +145,12 @@ class SearchNewsFragment : Fragment() {
             val visibleItemCount = layoutManager.childCount
             val totalItemCount = layoutManager.itemCount
 
+            val isNoErrors = !isError
             val isNotLoadingAndNotLastPage = !isLoading && !isLastPage
             val isAtLastItem = firstVisibleItemPosition + visibleItemCount >=totalItemCount
             val isNotAtBeginning = firstVisibleItemPosition >= 0
             val isTotalMoreThanVisible = totalItemCount >= Constants.QUERY_PAGE_SIZE
-            val shouldPaginate = isNotLoadingAndNotLastPage && isAtLastItem &&
+            val shouldPaginate = isNoErrors && isNotLoadingAndNotLastPage && isAtLastItem &&
                     isNotAtBeginning && isTotalMoreThanVisible && isScrolling
 
             if(shouldPaginate) {
